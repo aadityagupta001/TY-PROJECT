@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NeoEstate | Premium Property Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Poppins,Arial;background:#0a0e27;color:#fff;overflow-x:hidden}
+:root{--accent:#4fd1c5;--glass:rgba(255,255,255,0.1)}
+
+.bg{position:fixed;inset:0;background:linear-gradient(135deg,rgba(79,209,197,0.05),rgba(10,14,39,0.95)),url("https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=2000");background-size:cover;z-index:1}
+
+.glass{background:var(--glass);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.18);border-radius:20px;transition:0.5s}
+.glass:hover{transform:translateY(-8px);box-shadow:0 25px 50px rgba(79,209,197,0.2)}
+
+header{position:fixed;top:0;width:100%;padding:20px 8%;display:flex;justify-content:space-between;align-items:center;background:rgba(10,14,39,0.7);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.1);z-index:1000}
+
+.logo{font-size:28px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4fd1c5,#9ffcf3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+nav{display:flex;gap:10px}
+nav button{padding:10px 24px;color:#fff;font-weight:500;border-radius:30px;background:transparent;border:1px solid transparent;cursor:pointer;font-family:Poppins;font-size:14px;transition:0.3s}
+nav button:hover{background:var(--glass);border-color:rgba(255,255,255,0.18)}
+
+section{padding:120px 8% 80px;position:relative;z-index:10}
+
+.hero{min-height:100vh;display:flex;align-items:center}
+.hero h1{font-size:64px;font-weight:700;line-height:1.2;margin-bottom:24px;background:linear-gradient(135deg,#fff,#4fd1c5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:18px;opacity:0.85;margin-bottom:32px}
+
+.btn{padding:16px 40px;border-radius:50px;border:1px solid rgba(255,255,255,0.18);cursor:pointer;font-weight:600;background:var(--glass);backdrop-filter:blur(20px);color:#fff;transition:0.4s}
+.btn:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(79,209,197,0.3)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;margin:80px 0;z-index:10;position:relative}
+.stat-card{padding:40px 30px;text-align:center}
+.stat-card h3{font-size:48px;color:var(--accent);margin-bottom:12px}
+
+#properties h2{font-size:48px;margin-bottom:50px;text-align:center;background:linear-gradient(135deg,#fff,#4fd1c5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.properties-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:30px}
+
+.property{height:400px;position:relative;overflow:hidden;cursor:pointer}
+.property img{width:100%;height:100%;object-fit:cover;transition:0.8s;display:block}
+.property:hover img{transform:scale(1.15)}
+.property .overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.95));pointer-events:none}
+.property .info{position:absolute;bottom:0;left:0;right:0;padding:28px;transition:0.5s}
+.property:hover .info{transform:translateY(-10px)}
+.property h3{font-size:24px;margin-bottom:8px}
+.property .location{color:var(--accent);font-size:14px;margin-bottom:12px}
+.property .price{font-size:28px;font-weight:700;margin-bottom:12px}
+.property .features{display:flex;gap:16px;font-size:14px;opacity:0.8}
+
+#contact h2{font-size:48px;margin-bottom:20px;text-align:center}
+#contact>p{text-align:center;opacity:0.8;margin-bottom:50px}
+.contact-form{max-width:600px;margin:0 auto;padding:40px}
+input,textarea{width:100%;padding:16px 20px;border-radius:15px;border:1px solid rgba(255,255,255,0.18);background:var(--glass);backdrop-filter:blur(20px);color:#fff;font-family:Poppins;margin-bottom:20px}
+input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{min-height:120px}
+
+footer{padding:40px 8%;text-align:center;border-top:1px solid rgba(255,255,255,0.1);opacity:0.7;z-index:10;position:relative}
+
+.modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);z-index:2000}
+.modal.active{display:flex}
+.modal-content{width:420px;padding:40px;position:relative}
+.modal-content h3{font-size:32px;margin-bottom:24px;text-align:center}
+.close-modal{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer}
+
+#adminDashboard{display:none;position:fixed;inset:0;background:#0a0e27;padding:100px 8%;z-index:3000;overflow-y:auto}
+#adminDashboard.active{display:block}
+.admin-header{display:flex;justify-content:space-between;margin-bottom:40px}
+.admin-header h2{font-size:42px;color:var(--accent)}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;margin-bottom:40px}
+.admin-card{padding:30px}
+.admin-card h4{font-size:14px;opacity:0.7;margin-bottom:12px}
+.admin-card .value{font-size:36px;font-weight:700;color:var(--accent)}
+
+@media(max-width:768px){
+  .hero h1{font-size:42px}
+  .properties-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<header>
+  <div class="logo" id="adminTrigger">Aaditya<span style="color:var(--accent)">Estate</span></div>
+  <nav>
+    <button onclick="location.href='#home'">Home</button>
+    <button onclick="location.href='#properties'">Properties</button>
+    <button onclick="location.href='#contact'">Contact</button>
+    <button onclick="openModal('register')">Register</button>
+    <button onclick="openModal('login')">Login</button>
+  </nav>
+</header>
+
+<section class="hero" id="home">
+  <div>
+    <h1>Discover Your Dream Property</h1>
+    <p>Experience luxury living with our curated collection of premium apartments, penthouses, and villas across India.</p>
+    <button class="btn" onclick="location.href='#properties'">Explore Properties</button>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="glass stat-card">
+    <h3>20,000+</h3>
+    <p>Properties</p>
+  </div>
+  <div class="glass stat-card">
+    <h3>10,200+</h3>
+    <p>Happy Clients</p>
+  </div>
+  <div class="glass stat-card">
+    <h3>50+</h3>
+    <p>Cities</p>
+  </div>
+  <div class="glass stat-card">
+    <h3>₹500Cr+</h3>
+    <p>Worth</p>
+  </div>
+</div>
+
+<section id="properties">
+  <h2>Featured Properties</h2>
+  <div class="properties-grid">
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Skyline Residence</h3>
+        <div class="location">📍 Worli, Mumbai</div>
+        <div class="price">₹3.2 Cr</div>
+        <div class="features"><span>3 BHK</span><span>2,200 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Royal Penthouse</h3>
+        <div class="location">📍 Indiranagar, Bangalore</div>
+        <div class="price">₹4.5 Cr</div>
+        <div class="features"><span>4 BHK</span><span>3,500 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Emerald Villa</h3>
+        <div class="location">📍 Whitefield, Bangalore</div>
+        <div class="price">₹5.8 Cr</div>
+        <div class="features"><span>5 BHK</span><span>4,800 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Tech Hub Tower</h3>
+        <div class="location">📍 Cyber City, Gurgaon</div>
+        <div class="price">₹12 Cr</div>
+        <div class="features"><span>Commercial</span><span>8,000 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Meridian Heights</h3>
+        <div class="location">📍 Powai, Mumbai</div>
+        <div class="price">₹2.8 Cr</div>
+        <div class="features"><span>3 BHK</span><span>1,850 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Palm Paradise</h3>
+        <div class="location">📍 Sarjapur Road, Bangalore</div>
+        <div class="price">₹6.2 Cr</div>
+        <div class="features"><span>4 BHK</span><span>5,200 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Grand Duplex</h3>
+        <div class="location">📍 Golf Course Road, Gurgaon</div>
+        <div class="price">₹7.5 Cr</div>
+        <div class="features"><span>5 BHK</span><span>4,500 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Urban Studio</h3>
+        <div class="location">📍 Koramangala, Bangalore</div>
+        <div class="price">₹95 Lac</div>
+        <div class="features"><span>1 BHK</span><span>650 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Cloud Nine Penthouse</h3>
+        <div class="location">📍 Bandra, Mumbai</div>
+        <div class="price">₹8.9 Cr</div>
+        <div class="features"><span>4 BHK</span><span>4,200 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Elite Mansion</h3>
+        <div class="location">📍 Jubilee Hills, Hyderabad</div>
+        <div class="price">₹9.5 Cr</div>
+        <div class="features"><span>6 BHK</span><span>6,500 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Heritage Manor</h3>
+        <div class="location">📍 Civil Lines, Delhi</div>
+        <div class="price">₹11.2 Cr</div>
+        <div class="features"><span>7 BHK</span><span>8,000 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Azure Bay Villa</h3>
+        <div class="location">📍 ECR, Chennai</div>
+        <div class="price">₹4.8 Cr</div>
+        <div class="features"><span>4 BHK</span><span>3,800 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Crystal Heights</h3>
+        <div class="location">📍 Boat Club Road, Pune</div>
+        <div class="price">₹5.2 Cr</div>
+        <div class="features"><span>5 BHK</span><span>4,600 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Diamond Estate</h3>
+        <div class="location">📍 Vasant Vihar, Delhi</div>
+        <div class="price">₹13.5 Cr</div>
+        <div class="features"><span>6 BHK</span><span>7,200 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Sunset Paradise</h3>
+        <div class="location">📍 North Goa</div>
+        <div class="price">₹7.8 Cr</div>
+        <div class="features"><span>5 BHK</span><span>5,000 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Quantum Residence</h3>
+        <div class="location">📍 Hitec City, Hyderabad</div>
+        <div class="price">₹6.5 Cr</div>
+        <div class="features"><span>4 BHK</span><span>4,100 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Royal Regency</h3>
+        <div class="location">📍 Cuffe Parade, Mumbai</div>
+        <div class="price">₹10.5 Cr</div>
+        <div class="features"><span>5 BHK</span><span>5,500 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Green Oasis Villa</h3>
+        <div class="location">📍 Hennur Road, Bangalore</div>
+        <div class="price">₹4.2 Cr</div>
+        <div class="features"><span>4 BHK</span><span>3,600 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Pearl Palace</h3>
+        <div class="location">📍 Alipore, Kolkata</div>
+        <div class="price">₹8.2 Cr</div>
+        <div class="features"><span>6 BHK</span><span>6,800 sqft</span></div>
+      </div>
+    </div>
+
+    <div class="glass property">
+      <img src="https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?w=1200" alt="Property">
+      <div class="overlay"></div>
+      <div class="info">
+        <h3>Infinity View</h3>
+        <div class="location">📍 Pali Hill, Mumbai</div>
+        <div class="price">₹15.8 Cr</div>
+        <div class="features"><span>5 BHK</span><span>6,200 sqft</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="contact">
+  <h2>Get In Touch</h2>
+  <p>Our consultants are here to help</p>
+  <div class="glass contact-form">
+    <input id="cName" placeholder="Your Name">
+    <input id="cEmail" placeholder="Email">
+    <input id="cPhone" placeholder="Phone">
+    <textarea id="cMsg" placeholder="Message"></textarea>
+    <button class="btn" onclick="submitContact()" style="width:100%">Send Message</button>
+  </div>
+</section>
+
+<footer>NeoEstate © 2025 | Premium Real Estate</footer>
+
+<!-- MODALS -->
+<div class="modal" id="register">
+  <div class="glass modal-content">
+    <button class="close-modal" onclick="closeModal('register')">&times;</button>
+    <h3>Register</h3>
+    <input id="rName" placeholder="Name">
+    <input id="rEmail" placeholder="Email">
+    <input id="rPhone" placeholder="Phone">
+    <input id="rPass" type="password" placeholder="Password">
+    <button class="btn" onclick="register()" style="width:100%">Register</button>
+  </div>
+</div>
+
+<div class="modal" id="login">
+  <div class="glass modal-content">
+    <button class="close-modal" onclick="closeModal('login')">&times;</button>
+    <h3>Login</h3>
+    <input id="lEmail" placeholder="Email">
+    <input id="lPass" type="password" placeholder="Password">
+    <button class="btn" onclick="login()" style="width:100%">Login</button>
+  </div>
+</div>
+
+<div class="modal" id="adminLogin">
+  <div class="glass modal-content">
+    <button class="close-modal" onclick="closeModal('adminLogin')">&times;</button>
+    <h3>Admin Access</h3>
+    <input id="adminUser" placeholder="Username">
+    <input id="adminPass" type="password" placeholder="Password">
+    <button class="btn" onclick="adminLogin()" style="width:100%">Login</button>
+  </div>
+</div>
+
+<div id="adminDashboard">
+  <div class="admin-header">
+    <h2>Admin Dashboard</h2>
+    <button class="btn" onclick="closeAdmin()">Logout</button>
+  </div>
+  <div class="admin-stats">
+    <div class="glass admin-card">
+      <h4>Total Properties</h4>
+      <div class="value">20,247</div>
+    </div>
+    <div class="glass admin-card">
+      <h4>Active Users</h4>
+      <div class="value">10,582</div>
+    </div>
+    <div class="glass admin-card">
+      <h4>Monthly Revenue</h4>
+      <div class="value">₹45Cr</div>
+    </div>
+    <div class="glass admin-card">
+      <h4>Pending</h4>
+      <div class="value">127</div>
+    </div>
+  </div>
+  <div class="glass" style="padding:30px">
+    <h3 style="color:var(--accent);margin-bottom:20px">Recent Activity</h3>
+    <p style="opacity:0.8;margin-bottom:10px">✓ New property: Skyline Residence - ₹3.2 Cr</p>
+    <p style="opacity:0.8;margin-bottom:10px">✓ User registered: raj@email.com</p>
+    <p style="opacity:0.8;margin-bottom:10px">✓ Property sold: Palm Paradise - ₹6.2 Cr</p>
+    <p style="opacity:0.8">✓ New inquiry: Commercial space in Gurgaon</p>
+  </div>
+</div>
+
+</script>
+<script>
+const API_BASE = '/api';
+function qs(id){return document.getElementById(id)}
+window.addEventListener('scroll',()=>{
+  let s=window.pageYOffset;document.querySelector('.bg').style.transform=`translateY(${s*0.3}px)`;
+});
+function openModal(id){qs(id).classList.add('active')}
+function closeModal(id){qs(id).classList.remove('active')}
+function closeAll(){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('active'))}
+
+async function register(){
+  const name=qs('rName').value.trim();
+  const email=qs('rEmail').value.trim();
+  const phone=qs('rPhone').value.trim();
+  const pass=qs('rPass').value;
+  if(!name||!email||!phone||!pass){alert('Fill all fields');return}
+  const res=await fetch(API_BASE+'/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,password:pass})});
+  const j=await res.json();
+  if(!res.ok){alert(j.error||'Error');return}
+  localStorage.setItem('token',j.token);
+  alert(`Welcome ${j.user.name}!`);
+  closeAll();
+}
+
+async function login(){
+  const email=qs('lEmail').value.trim();
+  const pass=qs('lPass').value;
+  if(!email||!pass){alert('Fill all fields');return}
+  const res=await fetch(API_BASE+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+  const j=await res.json();
+  if(!res.ok){alert(j.error||'Error');return}
+  localStorage.setItem('token',j.token);
+  alert(`Welcome back ${j.user.name}!`);
+  closeAll();
+}
+
+async function submitContact(){
+  const n=qs('cName').value.trim();
+  const e=qs('cEmail').value.trim();
+  const p=qs('cPhone').value.trim();
+  const m=qs('cMsg').value.trim();
+  if(!n||!e||!p||!m){alert('Fill all fields');return}
+  const res=await fetch(API_BASE+'/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:e,phone:p,message:m})});
+  const j=await res.json();
+  if(!res.ok){alert(j.error||'Error');return}
+  alert(`Thanks ${n}! We'll contact you soon.`);
+  qs('cName').value='';qs('cEmail').value='';qs('cPhone').value='';qs('cMsg').value='';
+}
+
+// load properties from API
+async function loadProperties(){
+  try{
+    const res=await fetch(API_BASE+'/properties');
+    const props=await res.json();
+    const grid=document.querySelector('.properties-grid');
+    grid.innerHTML='';
+    props.forEach(p=>{
+      const div=document.createElement('div');div.className='glass property';
+      div.innerHTML=`<img src="${p.image}" alt="Property"><div class="overlay"></div><div class="info"><h3>${p.title}</h3><div class="location">📍 ${p.location}</div><div class="price">${p.price}</div><div class="features">${p.features.map(f=>`<span>${f}</span>`).join('')}</div></div>`;
+      grid.appendChild(div);
+    });
+  }catch(e){console.error(e)}
+}
+
+let holdTimer;
+qs('adminTrigger').onmousedown=()=>{holdTimer=setTimeout(()=>openModal('adminLogin'),1200);};
+qs('adminTrigger').onmouseup=()=>clearTimeout(holdTimer);
+qs('adminTrigger').onmouseleave=()=>clearTimeout(holdTimer);
+
+async function adminLogin(){
+  const u=qs('adminUser').value.trim();
+  const p=qs('adminPass').value;
+  if(!u||!p){alert('Fill all fields');return}
+  const res=await fetch(API_BASE+'/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+  const j=await res.json();
+  if(!res.ok){alert(j.error||'Invalid');return}
+  localStorage.setItem('token',j.token);
+  closeAll();
+  await loadAdminDashboard();
+  qs('adminDashboard').classList.add('active');
+}
+
+async function loadAdminDashboard(){
+  const token=localStorage.getItem('token');
+  if(!token) return;
+  const res=await fetch(API_BASE+'/admin/stats',{headers:{'Authorization':'Bearer '+token}});
+  if(!res.ok){console.warn('Not admin');return}
+  const s=await res.json();
+  document.querySelectorAll('.admin-card .value').forEach((el,i)=>{
+    const keys=['properties','users','contacts','pending'];
+    el.textContent = s[Object.keys(s)[i]] ?? el.textContent;
+  });
+}
+
+function closeAdmin(){qs('adminDashboard').classList.remove('active');}
+
+// initial load
+loadProperties();
+</script>
+</body>
+</html>
